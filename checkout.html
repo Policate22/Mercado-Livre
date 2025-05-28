@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado Livre - Finalizar Compra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #fff8e6;
+        }
+        .success-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(16, 185, 129, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        .success-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .checkmark {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 5;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            margin: 10% auto;
+            box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 5;
+            stroke-miterlimit: 10;
+            stroke: #fff;
+            fill: none;
+            animation: stroke .6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke .3s cubic-bezier(0.65, 0, 0.45, 1) .8s forwards;
+        }
+        @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+        }
+        @keyframes scale {
+            0%, 100% { transform: none; }
+            50% { transform: scale3d(1.1, 1.1, 1); }
+        }
+        @keyframes fill {
+            100% { box-shadow: inset 0 0 0 100px rgba(16, 185, 129, 0); }
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .qr-code img {
+            width: 150px;
+            height: 150px;
+        }
+        .boleto {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .boleto-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .boleto-logo {
+            font-weight: bold;
+            color: #00a650;
+        }
+        .boleto-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .boleto-body {
+            margin-bottom: 15px;
+        }
+        .boleto-line {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        .boleto-label {
+            font-weight: bold;
+            width: 150px;
+        }
+        .boleto-value {
+            flex-grow: 1;
+        }
+        .boleto-barcode {
+            text-align: center;
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+        .boleto-footer {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Overlay de sucesso -->
+    <div id="successOverlay" class="success-overlay">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+        <h2 class="text-white text-3xl font-bold mb-4">Compra realizada com sucesso!</h2>
+        <p class="text-white text-xl mb-8">Obrigado por comprar conosco</p>
+        <a href="home.html" class="bg-white text-green-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">Voltar à página inicial</a>
+    </div>
+
+    <!-- Overlay de processamento -->
+    <div id="processingOverlay" class="success-overlay bg-blue-600">
+        <div class="loading mb-4" style="width: 50px; height: 50px; border-width: 5px;"></div>
+        <h2 class="text-white text-3xl font-bold mb-4">Processando pagamento...</h2>
+        <p class="text-white text-xl">Por favor, aguarde</p>
+    </div>
+
+    <!-- Overlay de PIX -->
+    <div id="pixOverlay" class="success-overlay bg-white hidden">
+        <div class="text-center">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Pagamento via PIX</h2>
+            <p class="text-gray-600 mb-6">Escaneie o QR Code abaixo para realizar o pagamento</p>
+            
+            <div class="qr-code">
+                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0id2hpdGUiLz48cmVjdCB4PSI1MCIgeT0iNTAiIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJibGFjayIvPjx0ZXh0IHg9IjEwMCIgeT0iMTkwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9ImJsYWNrIj5NRVJDQURPIExJVlJFIFBJWDwvdGV4dD48L3N2Zz4=" alt="QR Code PIX">
+                <p class="text-sm text-gray-600 mt-2">Valor: R$ <span id="pixAmount">0,00</span></p>
+            </div>
+            
+            <p class="text-gray-600 mb-6">Ou copie o código abaixo para pagar manualmente</p>
+            <div class="bg-gray-100 p-3 rounded-lg mb-6 max-w-md mx-auto">
+                <p class="font-mono text-sm break-all">00020126580014BR.GOV.BCB.PIX0136123e4567-e12b-12d1-a456-4266554400005204000053039865405<span id="pixAmountRaw">0.00</span>5802BR5913MERCADO LIVRE6015SAO PAULO SP62070503***6304</p>
+            </div>
+            
+            <button id="pixPaid" class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors">Já efetuei o pagamento</button>
+            <button id="pixCancel" class="mt-4 bg-gray-200 text-gray-800 px-6 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Overlay de Boleto -->
+    <div id="boletoOverlay" class="success-overlay bg-white hidden">
+        <div class="text-center">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">Pagamento via Boleto</h2>
+            
+            <div class="boleto">
+                <div class="boleto-header">
+                    <div class="boleto-logo">MERCADO LIVRE</div>
+                    <div class="boleto-title">BOLETO BANCÁRIO</div>
+                </div>
+                
+                <div class="boleto-body">
+                    <div class="boleto-line">
+                        <div class="boleto-label">Beneficiário:</div>
+                        <div class="boleto-value">MERCADO LIVRE LTDA</div>
+                    </div>
+                    <div class="boleto-line">
+                        <div class="boleto-label">CNPJ:</div>
+                        <div class="boleto-value">12.345.678/0001-99</div>
+                    </div>
+                    <div class="boleto-line">
+                        <div class="boleto-label">Valor:</div>
+                        <div class="boleto-value">R$ <span id="boletoAmount">0,00</span></div>
+                    </div>
+                    <div class="boleto-line">
+                        <div class="boleto-label">Vencimento:</div>
+                        <div class="boleto-value" id="boletoDueDate">--/--/----</div>
+                    </div>
+                    <div class="boleto-line">
+                        <div class="boleto-label">Código de Barras:</div>
+                    </div>
+                    <div class="boleto-barcode">34191.12345 67899.123456 78999.123456 1 99990000012345</div>
+                </div>
+                
+                <div class="boleto-footer">
+                    <p>Este boleto pode ser pago em qualquer agência bancária ou internet banking até a data de vencimento.</p>
+                    <p class="mt-2">Após o vencimento, serão cobrados juros de 1% ao dia.</p>
+                </div>
+            </div>
+            
+            <button id="boletoPaid" class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors">Já efetuei o pagamento</button>
+            <button id="boletoCancel" class="mt-4 bg-gray-200 text-gray-800 px-6 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- Cabeçalho -->
+    <header class="bg-yellow-400 py-2 px-4 shadow-md">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="home.html" class="text-2xl font-bold text-blue-900">Mercado Livre</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="cart.html" class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </a>
+                <button class="text-gray-800 font-medium">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="container mx-auto py-6 px-4">
+        <h1 class="text-2xl font-bold mb-6">Finalizar compra</h1>
+        
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="md:w-2/3">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-lg font-semibold mb-4">Endereço de entrega</h2>
+                    <form id="addressForm" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="cep" class="block text-sm font-medium text-gray-700">CEP</label>
+                                <input type="text" id="cep" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                                <button type="button" id="searchCep" class="mt-2 text-sm text-blue-600 hover:text-blue-800">Buscar endereço</button>
+                            </div>
+                            <div>
+                                <label for="street" class="block text-sm font-medium text-gray-700">Rua</label>
+                                <input type="text" id="street" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="number" class="block text-sm font-medium text-gray-700">Número</label>
+                                <input type="text" id="number" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                            <div>
+                                <label for="complement" class="block text-sm font-medium text-gray-700">Complemento</label>
+                                <input type="text" id="complement" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label for="neighborhood" class="block text-sm font-medium text-gray-700">Bairro</label>
+                                <input type="text" id="neighborhood" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="city" class="block text-sm font-medium text-gray-700">Cidade</label>
+                                <input type="text" id="city" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                            <div>
+                                <label for="state" class="block text-sm font-medium text-gray-700">Estado</label>
+                                <input type="text" id="state" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-lg font-semibold mb-4">Método de pagamento</h2>
+                    <form id="paymentForm" class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="paymentMethod" value="credit" class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                <span class="ml-2">Cartão de crédito</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="paymentMethod" value="debit" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2">Cartão de débito</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="paymentMethod" value="boleto" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2">Boleto bancário</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="paymentMethod" value="pix" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-2">PIX</span>
+                            </label>
+                        </div>
+                        
+                        <div id="creditCardFields">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label for="cardNumber" class="block text-sm font-medium text-gray-700">Número do cartão</label>
+                                    <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label for="cardName" class="block text-sm font-medium text-gray-700">Nome no cartão</label>
+                                    <input type="text" id="cardName" placeholder="Nome como no cartão" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                <div>
+                                    <label for="cardExpiry" class="block text-sm font-medium text-gray-700">Validade</label>
+                                    <input type="text" id="cardExpiry" placeholder="MM/AA" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                                <div>
+                                    <label for="cardCvv" class="block text-sm font-medium text-gray-700">CVV</label>
+                                    <input type="text" id="cardCvv" placeholder="123" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Campos para PIX -->
+                        <div id="pixFields" class="hidden mt-4 p-4 bg-gray-50 rounded-lg">
+                            <div class="text-center">
+                                <p class="font-medium mb-2">Você selecionou pagamento via PIX</p>
+                                <p class="text-sm text-gray-600 mb-4">Após confirmar a compra, exibiremos o QR Code para pagamento</p>
+                                <div class="flex items-center justify-center text-green-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Pagamento instantâneo</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Campos para Boleto -->
+                        <div id="boletoFields" class="hidden mt-4 p-4 bg-gray-50 rounded-lg">
+                            <div class="text-center">
+                                <p class="font-medium mb-2">Você selecionou pagamento via Boleto</p>
+                                <p class="text-sm text-gray-600 mb-4">Após confirmar a compra, exibiremos o boleto para pagamento</p>
+                                <div class="flex items-center justify-center text-blue-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
+                                        <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Válido por 3 dias</span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="md:w-1/3">
+                <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+                    <h2 class="text-lg font-semibold mb-4">Resumo da compra</h2>
+                    
+                    <div id="checkoutItems" class="space-y-3 mb-6 max-h-64 overflow-y-auto">
+                        <!-- Itens do carrinho serão adicionados aqui via JavaScript -->
+                    </div>
+                    
+                    <div class="space-y-3 border-t pt-4">
+                        <div class="flex justify-between">
+                            <span>Subtotal</span>
+                            <span id="checkoutSubtotal">R$ 0,00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Frete</span>
+                            <span id="checkoutShipping">Grátis</span>
+                        </div>
+                        <div class="flex justify-between font-semibold text-lg">
+                            <span>Total</span>
+                            <span id="checkoutTotal">R$ 0,00</span>
+                        </div>
+                    </div>
+                    
+                    <button id="confirmPurchase" class="mt-6 w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                        Confirmar compra
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Navbar no rodapé -->
+    <footer class="bg-yellow-400 py-3 px-4 shadow-md fixed bottom-0 w-full">
+        <div class="container mx-auto flex justify-around items-center">
+            <a href="home.html" class="flex flex-col items-center text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span class="text-xs">Início</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span class="text-xs">Buscar</span>
+            </a>
+            <a href="cart.html" class="flex flex-col items-center text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span class="text-xs">Carrinho</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-gray-800">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span class="text-xs">Perfil</span>
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // Simular carrinho de compras
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Atualizar contador do carrinho
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+        
+        // Atualizar resumo da compra
+        function updateCheckoutSummary() {
+            const checkoutItemsContainer = document.getElementById('checkoutItems');
+            checkoutItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                window.location.href = 'cart.html';
+                return;
+            }
+            
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = 'flex items-start pb-3';
+                itemElement.innerHTML = `
+                    <img src="${item.image || 'img/placeholder.png'}" alt="${item.name}" class="w-12 h-12 object-contain mr-3">
+                    <div class="flex-grow">
+                        <p class="text-sm line-clamp-2">${item.name}</p>
+                        <p class="text-xs text-gray-500">${item.quantity} x R$ ${item.price.toFixed(2).replace('.', ',')}</p>
+                    </div>
+                    <div class="font-medium">
+                        R$ ${itemTotal.toFixed(2).replace('.', ',')}
+                    </div>
+                `;
+                
+                checkoutItemsContainer.appendChild(itemElement);
+            });
+            
+            document.getElementById('checkoutSubtotal').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+            document.getElementById('checkoutTotal').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+            
+            // Atualizar também os valores nos overlays de pagamento
+            document.getElementById('pixAmount').textContent = subtotal.toFixed(2).replace('.', ',');
+            document.getElementById('pixAmountRaw').textContent = subtotal.toFixed(2);
+            document.getElementById('boletoAmount').textContent = subtotal.toFixed(2).replace('.', ',');
+        }
+        
+        // Buscar endereço pelo CEP
+        document.getElementById('searchCep').addEventListener('click', function() {
+            const cep = document.getElementById('cep').value.replace(/\D/g, '');
+            
+            if (cep.length !== 8) {
+                alert('CEP deve conter 8 dígitos');
+                return;
+            }
+            
+            fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.erro) {
+                        alert('CEP não encontrado');
+                        return;
+                    }
+                    
+                    // Preencher os campos com os dados retornados
+                    document.getElementById('street').value = data.logradouro || '';
+                    document.getElementById('neighborhood').value = data.bairro || '';
+                    document.getElementById('city').value = data.localidade || '';
+                    document.getElementById('state').value = data.uf || '';
+                    
+                    // Focar no campo número após preencher os dados
+                    document.getElementById('number').focus();
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar CEP:', error);
+                    alert('Erro ao buscar CEP. Por favor, tente novamente.');
+                });
+        });
+        
+        // Alternar campos de acordo com o método de pagamento
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('creditCardFields').classList.add('hidden');
+                document.getElementById('pixFields').classList.add('hidden');
+                document.getElementById('boletoFields').classList.add('hidden');
+                
+                if (this.value === 'credit') {
+                    document.getElementById('creditCardFields').classList.remove('hidden');
+                } else if (this.value === 'pix') {
+                    document.getElementById('pixFields').classList.remove('hidden');
+                } else if (this.value === 'boleto') {
+                    document.getElementById('boletoFields').classList.remove('hidden');
+                }
+            });
+        });
+        
+        // Configurar data de vencimento do boleto (3 dias a partir de hoje)
+        function setupBoletoDueDate() {
+            const today = new Date();
+            const dueDate = new Date(today);
+            dueDate.setDate(today.getDate() + 3);
+            
+            const day = String(dueDate.getDate()).padStart(2, '0');
+            const month = String(dueDate.getMonth() + 1).padStart(2, '0');
+            const year = dueDate.getFullYear();
+            
+            document.getElementById('boletoDueDate').textContent = `${day}/${month}/${year}`;
+        }
+        
+        // API Fake de Pagamentos
+        function processPayment(paymentData) {
+            return new Promise((resolve, reject) => {
+                // Simular tempo de processamento
+                setTimeout(() => {
+                    // Simular sucesso ou falha aleatória (80% de chance de sucesso)
+                    const isSuccess = Math.random() < 0.8;
+                    
+                    if (isSuccess) {
+                        resolve({
+                            success: true,
+                            transactionId: 'TRX' + Math.floor(Math.random() * 1000000),
+                            paymentMethod: paymentData.paymentMethod,
+                            amount: paymentData.amount,
+                            message: 'Pagamento aprovado com sucesso'
+                        });
+                    } else {
+                        reject({
+                            success: false,
+                            errorCode: 'PAYMENT_FAILED',
+                            message: 'Pagamento não autorizado. Verifique os dados e tente novamente.'
+                        });
+                    }
+                }, 2000);
+            });
+        }
+        
+        // Mostrar overlay de PIX
+        function showPixOverlay() {
+            document.getElementById('pixOverlay').classList.remove('hidden');
+            document.getElementById('pixOverlay').classList.add('active');
+        }
+        
+        // Mostrar overlay de Boleto
+        function showBoletoOverlay() {
+            document.getElementById('boletoOverlay').classList.remove('hidden');
+            document.getElementById('boletoOverlay').classList.add('active');
+        }
+        
+        // Esconder todos os overlays
+        function hideAllOverlays() {
+            document.getElementById('pixOverlay').classList.add('hidden');
+            document.getElementById('pixOverlay').classList.remove('active');
+            document.getElementById('boletoOverlay').classList.add('hidden');
+            document.getElementById('boletoOverlay').classList.remove('active');
+            document.getElementById('processingOverlay').classList.remove('active');
+        }
+        
+        // Confirmar compra
+        document.getElementById('confirmPurchase').addEventListener('click', async function() {
+            // Validar formulário
+            const addressForm = document.getElementById('addressForm');
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            
+            let isValid = true;
+            
+            // Validar campos obrigatórios do endereço
+            addressForm.querySelectorAll('[required]').forEach(field => {
+                if (!field.value) {
+                    field.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+            
+            // Validar cartão de crédito se for o método selecionado
+            if (paymentMethod === 'credit') {
+                const cardFields = ['cardNumber', 'cardName', 'cardExpiry', 'cardCvv'];
+                cardFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (!field.value) {
+                        field.classList.add('border-red-500');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('border-red-500');
+                    }
+                });
+            }
+            
+            if (!isValid) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+            
+            // Mostrar overlay específico para PIX ou Boleto
+            if (paymentMethod === 'pix') {
+                showPixOverlay();
+                return;
+            } else if (paymentMethod === 'boleto') {
+                showBoletoOverlay();
+                return;
+            }
+            
+            // Para cartão de crédito/débito, processar diretamente
+            await processCreditCardPayment();
+        });
+        
+        // Processar pagamento com cartão de crédito/débito
+        async function processCreditCardPayment() {
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            
+            // Mostrar overlay de processamento
+            const processingOverlay = document.getElementById('processingOverlay');
+            processingOverlay.classList.add('active');
+            
+            // Desativar botão para evitar múltiplos cliques
+            document.getElementById('confirmPurchase').disabled = true;
+            
+            try {
+                // Preparar dados para a API de pagamento fake
+                const paymentData = {
+                    paymentMethod: paymentMethod,
+                    amount: cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+                    items: cart.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        quantity: item.quantity,
+                        price: item.price
+                    })),
+                    address: {
+                        street: document.getElementById('street').value,
+                        number: document.getElementById('number').value,
+                        complement: document.getElementById('complement').value,
+                        neighborhood: document.getElementById('neighborhood').value,
+                        city: document.getElementById('city').value,
+                        state: document.getElementById('state').value,
+                        cep: document.getElementById('cep').value
+                    }
+                };
+                
+                // Adicionar dados do cartão se for crédito/débito
+                if (paymentMethod === 'credit' || paymentMethod === 'debit') {
+                    paymentData.card = {
+                        number: document.getElementById('cardNumber').value,
+                        name: document.getElementById('cardName').value,
+                        expiry: document.getElementById('cardExpiry').value,
+                        cvv: document.getElementById('cardCvv').value
+                    };
+                }
+                
+                // Chamar API fake de pagamentos
+                const result = await processPayment(paymentData);
+                
+                // Esconder overlay de processamento
+                processingOverlay.classList.remove('active');
+                
+                if (result.success) {
+                    // Mostrar efeito de sucesso
+                    const successOverlay = document.getElementById('successOverlay');
+                    successOverlay.classList.add('active');
+                    
+                    // Limpar carrinho após sucesso
+                    cart = [];
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartCount();
+                    
+                    // Salvar histórico de compras
+                    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                    orders.push({
+                        id: 'ORD' + Date.now(),
+                        date: new Date().toISOString(),
+                        items: paymentData.items,
+                        total: paymentData.amount,
+                        paymentMethod: paymentMethod,
+                        address: paymentData.address,
+                        status: 'completed'
+                    });
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                } else {
+                    alert('Pagamento não autorizado: ' + result.message);
+                    document.getElementById('confirmPurchase').disabled = false;
+                }
+            } catch (error) {
+                // Esconder overlay de processamento
+                processingOverlay.classList.remove('active');
+                
+                alert('Erro ao processar pagamento: ' + error.message);
+                document.getElementById('confirmPurchase').disabled = false;
+            }
+        }
+        
+        // Botão "Já efetuei o pagamento" para PIX
+        document.getElementById('pixPaid').addEventListener('click', async function() {
+            hideAllOverlays();
+            await processPixPayment();
+        });
+        
+        // Botão "Já efetuei o pagamento" para Boleto
+        document.getElementById('boletoPaid').addEventListener('click', async function() {
+            hideAllOverlays();
+            await processBoletoPayment();
+        });
+        
+        // Botão "Cancelar" para PIX
+        document.getElementById('pixCancel').addEventListener('click', function() {
+            hideAllOverlays();
+        });
+        
+        // Botão "Cancelar" para Boleto
+        document.getElementById('boletoCancel').addEventListener('click', function() {
+            hideAllOverlays();
+        });
+        
+        // Processar pagamento via PIX
+        async function processPixPayment() {
+            // Mostrar overlay de processamento
+            const processingOverlay = document.getElementById('processingOverlay');
+            processingOverlay.classList.add('active');
+            
+            try {
+                // Preparar dados para a API de pagamento fake
+                const paymentData = {
+                    paymentMethod: 'pix',
+                    amount: cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+                    items: cart.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        quantity: item.quantity,
+                        price: item.price
+                    })),
+                    address: {
+                        street: document.getElementById('street').value,
+                        number: document.getElementById('number').value,
+                        complement: document.getElementById('complement').value,
+                        neighborhood: document.getElementById('neighborhood').value,
+                        city: document.getElementById('city').value,
+                        state: document.getElementById('state').value,
+                        cep: document.getElementById('cep').value
+                    }
+                };
+                
+                // Chamar API fake de pagamentos
+                const result = await processPayment(paymentData);
+                
+                // Esconder overlay de processamento
+                processingOverlay.classList.remove('active');
+                
+                if (result.success) {
+                    // Mostrar efeito de sucesso
+                    const successOverlay = document.getElementById('successOverlay');
+                    successOverlay.classList.add('active');
+                    
+                    // Limpar carrinho após sucesso
+                    cart = [];
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartCount();
+                    
+                    // Salvar histórico de compras
+                    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                    orders.push({
+                        id: 'ORD' + Date.now(),
+                        date: new Date().toISOString(),
+                        items: paymentData.items,
+                        total: paymentData.amount,
+                        paymentMethod: 'pix',
+                        address: paymentData.address,
+                        status: 'completed'
+                    });
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                } else {
+                    alert('Pagamento não autorizado: ' + result.message);
+                }
+            } catch (error) {
+                // Esconder overlay de processamento
+                processingOverlay.classList.remove('active');
+                
+                alert('Erro ao processar pagamento: ' + error.message);
+            }
+        }
+        
+        // Processar pagamento via Boleto
+        async function processBoletoPayment() {
+            // Mostrar overlay de processamento
+            const processingOverlay = document.getElementById('processingOverlay');
+            processingOverlay.classList.add('active');
+            
+            try {
+                // Preparar dados para a API de pagamento fake
+                const paymentData = {
+                    paymentMethod: 'boleto',
+                    amount: cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+                    items: cart.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        quantity: item.quantity,
+                        price: item.price
+                    })),
+                    address: {
+                        street: document.getElementById('street').value,
+                        number: document.getElementById('number').value,
+                        complement: document.getElementById('complement').value,
+                        neighborhood: document.getElementById('neighborhood').value,
+                        city: document.getElementById('city').value,
+                        state: document.getElementById('state').value,
+                        cep: document.getElementById('cep').value
+                    }
+                };
+                
+                // Chamar API fake de pagamentos
+                const result = await processPayment(paymentData);
+                
+                // Esconder overlay de processamento
+                processingOverlay.classList.remove('active');
+                
+                if (result.success) {
+                    // Mostrar efeito de sucesso
+                    const successOverlay = document.getElementById('successOverlay');
+                    successOverlay.classList.add('active');
+                    
+                    // Limpar carrinho após sucesso
+                    cart = [];
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    updateCartCount();
+                    
+                    // Salvar histórico de compras
+                    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+                    orders.push({
+                        id: 'ORD' + Date.now(),
+                        date: new Date().toISOString(),
+                        items: paymentData.items,
+                        total: paymentData.amount,
+                        paymentMethod: 'boleto',
+                        address: paymentData.address,
+                        status: 'pending' // Boleto ainda não foi pago
+                    });
+                    localStorage.setItem('orders', JSON.stringify(orders));
+                } else {
+                    alert('Pagamento não autorizado: ' + result.message);
+                }
+            } catch (error) {
+                // Esconder overlay de processamento
+                processingOverlay.classList.remove('active');
+                
+                alert('Erro ao processar pagamento: ' + error.message);
+            }
+        }
+        
+        // Inicializar
+        updateCheckoutSummary();
+        updateCartCount();
+        setupBoletoDueDate();
+    </script>
+</body>
+</html>

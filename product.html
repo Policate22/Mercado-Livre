@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado Livre - Detalhes do Produto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #fff8e6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Cabeçalho -->
+    <header class="bg-yellow-400 py-2 px-4 shadow-md">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="home.html" class="text-2xl font-bold text-blue-900">Mercado Livre</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="cart.html" class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </a>
+                <button id="logoutBtn" class="text-gray-800 font-medium">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo principal -->
+    <main class="container mx-auto py-6 px-4">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="md:flex">
+                <div class="md:w-1/2 p-6">
+                    <img id="productImage" src="" alt="Produto" class="w-full h-96 object-contain rounded-lg">
+                </div>
+                <div class="md:w-1/2 p-6">
+                    <h1 id="productName" class="text-2xl font-bold mb-2">Carregando...</h1>
+                    <p id="productPrice" class="text-3xl text-gray-800 font-bold mb-4">R$ 0,00</p>
+                    <p id="productInstallments" class="text-green-600 mb-6">12x de R$ 0,00 sem juros</p>
+                    
+                    <div class="mb-6">
+                        <h2 class="text-lg font-semibold mb-2">Descrição do produto</h2>
+                        <p id="productDescription" class="text-gray-700">
+                            Carregando descrição...
+                        </p>
+                    </div>
+                    
+                    <div class="flex items-center mb-6">
+                        <span class="text-yellow-400 mr-1">
+                            ★★★★★
+                        </span>
+                        <span class="text-gray-600 text-sm">(125 avaliações)</span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="flex items-center">
+                            <button id="decreaseQuantity" class="bg-gray-200 px-3 py-1 rounded-l-md">-</button>
+                            <span id="quantity" class="px-4 py-1 bg-gray-100">1</span>
+                            <button id="increaseQuantity" class="bg-gray-200 px-3 py-1 rounded-r-md">+</button>
+                        </div>
+                        <button id="addToCart" class="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            Adicionar ao carrinho
+                        </button>
+                    </div>
+                    
+                    <div class="border-t pt-4">
+                        <h3 class="font-semibold mb-2">Garantia</h3>
+                        <p class="text-gray-600 text-sm">12 meses de garantia direta com o fabricante</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simular carrinho de compras
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentQuantity = 1;
+        
+        // Atualizar contador do carrinho
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+        
+        // Simular dados do produto baseado na URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id') || '1';
+        
+        // Dados fictícios dos produtos com imagens
+        const products = {
+            '1': {
+                name: 'Smartphone XYZ 128GB Tela 6.5" Câmera Tripla 48MP',
+                price: 1999.99,
+                description: 'Smartphone XYZ com tela de 6.5 polegadas, processador Octa-core, 128GB de armazenamento, 6GB de RAM, câmera traseira tripla de 48MP + 12MP + 5MP e câmera frontal de 32MP. Bateria de 5000mAh com carregamento rápido.',
+                image: 'img/iphone.png'
+            },
+            '2': {
+                name: 'Notebook ABC i7 16GB SSD 512GB Tela 15.6" Full HD',
+                price: 3499.99,
+                description: 'Notebook ABC com processador i7, 16GB de RAM, SSD de 512GB, tela Full HD de 15.6 polegadas e placa de vídeo dedicada. Bateria com até 8 horas de duração.',
+                image: 'img/notebook.webp'
+            },
+            '3': {
+                name: 'Fone de Ouvido Bluetooth com Cancelamento de Ruído',
+                price: 299.99,
+                description: 'Fone de ouvido Bluetooth com cancelamento de ruído ativo, bateria de 30 horas de duração, à prova d\'água e com microfone integrado para chamadas.',
+                image: 'img/fone.jpg'
+            },
+            '4': {
+                name: 'Smartwatch Pro Monitor Cardíaco à Prova d\'Água',
+                price: 899.99,
+                description: 'Smartwatch Pro com monitoramento de frequência cardíaca, oxigenação no sangue, GPS integrado, resistente à água e com bateria de 7 dias de duração.',
+                image: 'img/relogio.jpg'
+            },
+            '5': {
+                name: 'TV Smart 55" 4K UHD HDR Android TV',
+                price: 2799.99,
+                description: 'TV Smart 55 polegadas com resolução 4K UHD, HDR, sistema operacional Android TV, 3 HDMI, 2 USB e conexão Wi-Fi.',
+                image: 'img/tv.webp'
+            },
+            '6': {
+                name: 'Câmera DSLR 24.2MP com Lente 18-55mm',
+                price: 3299.99,
+                description: 'Câmera DSLR profissional 24.2MP com lente 18-55mm, gravação em Full HD, tela articulável e Wi-Fi integrado.',
+                image: 'img/camera.jpg'
+            },
+            '7': {
+                name: 'Console de Games 1TB + 2 Controles',
+                price: 4499.99,
+                description: 'Console de última geração com 1TB de armazenamento, 2 controles sem fio, compatível com 4K e HDR.',
+                image: 'img/ps5.jpg'
+            },
+            '8': {
+                name: 'Air Fryer 5L Digital com Timer e 10 Programas',
+                price: 499.99,
+                description: 'Air Fryer digital com capacidade de 5 litros, timer ajustável, 10 programas pré-definidos e display digital.',
+                image: 'img/air fryer.jpg'
+            }
+        };
+        
+        // Carregar dados do produto
+        const product = products[productId];
+        if (product) {
+            document.title = `Mercado Livre - ${product.name}`;
+            document.getElementById('productName').textContent = product.name;
+            document.getElementById('productPrice').textContent = `R$ ${product.price.toFixed(2).replace('.', ',')}`;
+            document.getElementById('productInstallments').textContent = `12x de R$ ${(product.price / 12).toFixed(2).replace('.', ',')} sem juros`;
+            document.getElementById('productDescription').textContent = product.description;
+            document.getElementById('productImage').src = product.image;
+            document.getElementById('productImage').alt = product.name;
+            
+            // Configurar botão de adicionar ao carrinho
+            document.getElementById('addToCart').setAttribute('data-id', productId);
+            document.getElementById('addToCart').setAttribute('data-name', product.name);
+            document.getElementById('addToCart').setAttribute('data-price', product.price);
+            document.getElementById('addToCart').setAttribute('data-image', product.image);
+        }
+        
+        // Aumentar quantidade
+        document.getElementById('increaseQuantity').addEventListener('click', function() {
+            currentQuantity += 1;
+            document.getElementById('quantity').textContent = currentQuantity;
+        });
+        
+        // Diminuir quantidade
+        document.getElementById('decreaseQuantity').addEventListener('click', function() {
+            if (currentQuantity > 1) {
+                currentQuantity -= 1;
+                document.getElementById('quantity').textContent = currentQuantity;
+            }
+        });
+        
+        // Adicionar ao carrinho
+        document.getElementById('addToCart').addEventListener('click', function() {
+            if (!product) return;
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += currentQuantity;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: product.name,
+                    price: product.price,
+                    quantity: currentQuantity,
+                    image: product.image
+                });
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            
+            // Feedback visual
+            const originalText = this.textContent;
+            this.textContent = 'Adicionado!';
+            this.classList.add('bg-green-500', 'hover:bg-green-600');
+            this.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            
+            setTimeout(() => {
+                this.textContent = originalText;
+                this.classList.remove('bg-green-500', 'hover:bg-green-600');
+                this.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }, 2000);
+        });
+        
+        // Botão de sair
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (confirm('Deseja realmente sair?')) {
+                window.location.href = 'index.html';
+            }
+        });
+        
+        // Inicializar contador do carrinho
+        updateCartCount();
+    </script>
+</body>
+</html>

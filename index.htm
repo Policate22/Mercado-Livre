@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado Livre - Login/Cadastro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #fff8e6;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold text-yellow-500">Mercado Livre</h1>
+                <p class="text-gray-600 mt-2">Compre e venda com segurança</p>
+            </div>
+            
+            <!-- Tabs para Login/Cadastro -->
+            <div class="flex border-b mb-6">
+                <button id="loginTab" class="flex-1 py-2 font-medium text-blue-600 border-b-2 border-blue-600">Login</button>
+                <button id="registerTab" class="flex-1 py-2 font-medium text-gray-500">Cadastre-se</button>
+            </div>
+            
+            <!-- Formulário de Login -->
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="loginEmail" class="block text-sm font-medium text-gray-700">E-mail</label>
+                    <input type="email" id="loginEmail" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" required>
+                </div>
+                <div>
+                    <label for="loginPassword" class="block text-sm font-medium text-gray-700">Senha</label>
+                    <input type="password" id="loginPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" required>
+                </div>
+                <button type="submit" class="w-full bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors">Entrar</button>
+            </form>
+            
+            <!-- Formulário de Cadastro -->
+            <form id="registerForm" class="space-y-4 hidden">
+                <div>
+                    <label for="registerName" class="block text-sm font-medium text-gray-700">Nome completo</label>
+                    <input type="text" id="registerName" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" required>
+                </div>
+                <div>
+                    <label for="registerEmail" class="block text-sm font-medium text-gray-700">E-mail</label>
+                    <input type="email" id="registerEmail" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" required>
+                </div>
+                <div>
+                    <label for="registerPassword" class="block text-sm font-medium text-gray-700">Senha</label>
+                    <input type="password" id="registerPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" required>
+                </div>
+                <div>
+                    <label for="registerConfirmPassword" class="block text-sm font-medium text-gray-700">Confirmar Senha</label>
+                    <input type="password" id="registerConfirmPassword" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" required>
+                </div>
+                <button type="submit" class="w-full bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors">Cadastrar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Alternar entre login e cadastro
+        document.getElementById('loginTab').addEventListener('click', function() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            this.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            document.getElementById('registerTab').classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+            document.getElementById('registerTab').classList.add('text-gray-500');
+        });
+        
+        document.getElementById('registerTab').addEventListener('click', function() {
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('loginForm').classList.add('hidden');
+            this.classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
+            document.getElementById('loginTab').classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
+            document.getElementById('loginTab').classList.add('text-gray-500');
+        });
+        
+        // Simular cadastro e redirecionamento
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Validação de senha
+            if (document.getElementById('registerPassword').value !== document.getElementById('registerConfirmPassword').value) {
+                alert('As senhas não coincidem!');
+                return;
+            }
+            
+            // Armazenar nome do usuário
+            const userName = document.getElementById('registerName').value;
+            localStorage.setItem('userName', userName);
+            
+            alert('Cadastro realizado com sucesso! Redirecionando para a página inicial...');
+            window.location.href = 'home.html';
+        });
+        
+        // Simular login e redirecionamento
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Armazenar nome do usuário (simulado)
+            const userName = "Usuário Teste"; // Em um sistema real, isso viria da resposta do servidor
+            localStorage.setItem('userName', userName);
+            
+            alert('Login realizado com sucesso! Redirecionando para a página inicial...');
+            window.location.href = 'home.html';
+        });
+    </script>
+</body>
+</html>

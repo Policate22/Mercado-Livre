@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado Livre - Página Inicial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #fff8e6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabeçalho -->
+    <header class="bg-yellow-400 py-3 px-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="home.html" class="text-2xl font-bold text-blue-900 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm-1.06 13.54L7.4 12l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41-5.64 5.66z"/>
+                    </svg>
+                    Mercado Livre
+                </a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="cart.html" class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </a>
+                <button class="text-gray-800 font-medium hover:text-gray-600">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Barra de pesquisa -->
+    <div class="bg-white py-4 px-4 shadow-sm">
+        <div class="container mx-auto">
+            <div class="relative max-w-xl mx-auto">
+                <input type="text" placeholder="Buscar produtos, marcas e muito mais..." class="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 placeholder-gray-400">
+                <button class="absolute right-0 top-0 h-full px-4 text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <main class="container mx-auto py-6 px-4">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">Produtos em destaque</h2>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Produto 1 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
+                <a href="product.html?id=1">
+                    <img src="img/iphone.png" alt="Smartphone XYZ" class="w-full h-48 object-contain p-4">
+                </a>
+                <div class="p-4">
+                    <a href="product.html?id=1" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Smartphone XYZ 128GB Tela 6.5'' Câmera Tripla 48MP</a>
+                    <p class="text-gray-800 font-bold text-xl mt-2">R$ 1.999,99</p>
+                    <p class="text-green-600 text-sm mt-1">12x de R$ 166,66 sem juros</p>
+                    <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="1" data-name="Smartphone XYZ 128GB" data-price="1999.99" data-image="img/iphone.png">Adicionar ao carrinho</button>
+                </div>
+            </div>
+            
+            <!-- Produto 2 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
+                <a href="product.html?id=2">
+                    <img src="img/notebook.webp" alt="Notebook ABC" class="w-full h-48 object-contain p-4">
+                </a>
+                <div class="p-4">
+                    <a href="product.html?id=2" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Notebook ABC i7 16GB SSD 512GB Tela 15.6'' Full HD</a>
+                    <p class="text-gray-800 font-bold text-xl mt-2">R$ 3.499,99</p>
+                    <p class="text-green-600 text-sm mt-1">12x de R$ 291,66 sem juros</p>
+                    <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="2" data-name="Notebook ABC i7 16GB" data-price="3499.99" data-image="img/notebook.webp">Adicionar ao carrinho</button>
+                </div>
+            </div>
+            
+            <!-- Produto 3 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
+                <a href="product.html?id=3">
+                    <img src="img/fone.jpg" alt="Fone de Ouvido Bluetooth" class="w-full h-48 object-contain p-4">
+                </a>
+                <div class="p-4">
+                    <a href="product.html?id=3" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Fone de Ouvido Bluetooth com Cancelamento de Ruído</a>
+                    <p class="text-gray-800 font-bold text-xl mt-2">R$ 299,99</p>
+                    <p class="text-green-600 text-sm mt-1">6x de R$ 50,00 sem juros</p>
+                    <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="3" data-name="Fone Bluetooth Cancelamento Ruído" data-price="299.99" data-image="img/fone.jpg">Adicionar ao carrinho</button>
+                </div>
+            </div>
+            
+            <!-- Produto 4 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
+                <a href="product.html?id=4">
+                    <img src="img/relogio.jpg" alt="Smartwatch Pro" class="w-full h-48 object-contain p-4">
+                </a>
+                <div class="p-4">
+                    <a href="product.html?id=4" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Smartwatch Pro Monitor Cardíaco à Prova d'Água</a>
+                    <p class="text-gray-800 font-bold text-xl mt-2">R$ 899,99</p>
+                    <p class="text-green-600 text-sm mt-1">6x de R$ 150,00 sem juros</p>
+                    <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="4" data-name="Smartwatch Pro" data-price="899.99" data-image="img/relogio.jpg">Adicionar ao carrinho</button>
+                </div>
+            </div>
+            
+            <!-- Produto 5 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
+                <a href="product.html?id=5">
+                    <img src="img/tv.webp" alt="TV Smart 4K" class="w-full h-48 object-contain p-4">
+                </a>
+                <div class="p-4">
+                    <a href="product.html?id=5" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">TV Smart 55" 4K UHD HDR Android TV</a>
+                    <p class="text-gray-800 font-bold text-xl mt-2">R$ 2.799,99</p>
+                    <p class="text-green-600 text-sm mt-1">12x de R$ 233,33 sem juros</p>
+                    <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="5" data-name="TV Smart 55'' 4K" data-price="2799.99" data-image="img/tv.webp">Adicionar ao carrinho</button>
+                </div>
+            </div>
+            
+            <!-- Produto 6 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
+                <a href="product.html?id=6">
+                    <img src="img/camera.jpg" alt="Câmera DSLR" class="w-full h-48 object-contain p-4">
+                </a>
+                <div class="p-4">
+                    <a href="product.html?id=6" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Câmera DSLR 24.2MP com Lente 18-55mm</a>
+                    <p class="text-gray-800 font-bold text-xl mt-2">R$ 3.299,99</p>
+                    <p class="text-green-600 text-sm mt-1">12x de R$ 275,00 sem juros</p>
+                    <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="6" data-name="Câmera DSLR 24.2MP" data-price="3299.99" data-image="img/camera.jpg">Adicionar ao carrinho</button>
+                </div>
+            </div>
+            
+            <!-- Produto 7 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
+                <a href="product.html?id=7">
+                    <img src="img/ps5.jpg" alt="Console de Games" class="w-full h-48 object-contain p-4">
+                </a>
+                <div class="p-4">
+                    <a href="product.html?id=7" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Console de Games 1TB + 2 Controles</a>
+                    <p class="text-gray-800 font-bold text-xl mt-2">R$ 4.499,99</p>
+                    <p class="text-green-600 text-sm mt-1">12x de R$ 375,00 sem juros</p>
+                    <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="7" data-name="Console de Games 1TB" data-price="4499.99" data-image="img/ps5.jpg">Adicionar ao carrinho</button>
+                </div>
+            </div>
+            
+            <!-- Produto 8 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
+                <a href="product.html?id=8">
+                    <img src="img/air fryer.jpg" alt="Air Fryer" class="w-full h-48 object-contain p-4">
+                </a>
+                <div class="p-4">
+                    <a href="product.html?id=8" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Air Fryer 5L Digital com Timer e 10 Programas</a>
+                    <p class="text-gray-800 font-bold text-xl mt-2">R$ 499,99</p>
+                    <p class="text-green-600 text-sm mt-1">6x de R$ 83,33 sem juros</p>
+                    <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="8" data-name="Air Fryer 5L Digital" data-price="499.99" data-image="img/air fryer.jpg">Adicionar ao carrinho</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simular carrinho de compras
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Atualizar contador do carrinho
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+        
+        // Adicionar ao carrinho
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                const productName = this.getAttribute('data-name');
+                const productPrice = parseFloat(this.getAttribute('data-price'));
+                const productImage = this.getAttribute('data-image');
+                
+                const existingItem = cart.find(item => item.id === productId);
+                
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id: productId,
+                        name: productName,
+                        price: productPrice,
+                        quantity: 1,
+                        image: productImage
+                    });
+                }
+                
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                
+                // Feedback visual
+                const originalText = this.textContent;
+                this.textContent = 'Adicionado!';
+                this.classList.add('bg-green-500', 'hover:bg-green-600');
+                this.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                
+                setTimeout(() => {
+                    this.textContent = originalText;
+                    this.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    this.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+                }, 2000);
+            });
+        });
+        
+        // Inicializar contador do carrinho
+        updateCartCount();
+        const productImage = this.getAttribute('data-image');
+
+// ...
+cart.push({
+    id: productId,
+    name: productName,
+    price: productPrice,
+    quantity: 1,
+    image: productImage
+});
+    </script>
+</body>
+</html>
