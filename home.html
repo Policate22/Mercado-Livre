@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mercado Livre - Página Inicial</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <style>
         body {
             background-color: #fff8e6;
@@ -35,9 +34,66 @@
             font-weight: bold;
             z-index: 11;
         }
+        .logout-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        .logout-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .logout-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: 0.15em;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #333; }
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ffdb15;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-top: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- Overlay de logout -->
+    <div id="logoutOverlay" class="logout-overlay">
+        <div class="logout-text">Saindo do Mercado Livre...</div>
+        <div class="loading-spinner"></div>
+    </div>
+
     <!-- Cabeçalho -->
     <header class="bg-yellow-400 py-3 px-4 shadow-md sticky top-0 z-10">
         <div class="container mx-auto flex items-center justify-between">
@@ -56,7 +112,7 @@
                     </svg>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
                 </a>
-                <button class="text-gray-800 font-medium hover:text-gray-600">Sair</button>
+                <button id="logoutBtn" class="text-gray-800 font-medium hover:text-gray-600">Sair</button>
             </div>
         </div>
     </header>
@@ -251,6 +307,19 @@
     </main>
 
     <script>
+        // Adicionar evento ao botão de sair com efeito de carregamento
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            const logoutOverlay = document.getElementById('logoutOverlay');
+            
+            // Mostrar overlay de logout
+            logoutOverlay.classList.add('active');
+            
+            // Esperar a animação de digitação terminar (3.5s) + 1s de spinner
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 4500);
+        });
+
         // Simular carrinho de compras
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         
@@ -388,5 +457,6 @@
         updateCartCount();
         loadInitialStocks();
     </script>
+ 
 </body>
 </html>
