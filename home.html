@@ -5,9 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mercado Livre - Página Inicial</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
         body {
             background-color: #fff8e6;
+        }
+        .sold-out-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .sold-out-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 11;
         }
     </style>
 </head>
@@ -55,113 +81,169 @@
         
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <!-- Produto 1 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
-                <a href="product.html?id=1">
-                    <img src="img/iphone.png" alt="Smartphone XYZ" class="w-full h-48 object-contain p-4">
-                </a>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1 relative">
+                <div class="relative">
+                    <a href="product.html?id=1">
+                        <img src="img/iphone.png" alt="Smartphone XYZ" class="w-full h-48 object-contain p-4">
+                    </a>
+                    <div id="sold-out-badge-1" class="sold-out-badge hidden">ESGOTADO</div>
+                    <div id="sold-out-overlay-1" class="sold-out-overlay hidden">
+                        <span class="text-xl font-bold text-gray-700">PRODUTO ESGOTADO</span>
+                    </div>
+                </div>
                 <div class="p-4">
                     <a href="product.html?id=1" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Smartphone XYZ 128GB Tela 6.5'' Câmera Tripla 48MP</a>
                     <p class="text-gray-800 font-bold text-xl mt-2">R$ 1.999,99</p>
                     <p class="text-green-600 text-sm mt-1">12x de R$ 166,66 sem juros</p>
                     <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <p class="text-sm text-gray-600 mt-1">Estoque: <span id="stock-1">10</span> unidades</p>
                     <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="1" data-name="Smartphone XYZ 128GB" data-price="1999.99" data-image="img/iphone.png">Adicionar ao carrinho</button>
                 </div>
             </div>
             
             <!-- Produto 2 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
-                <a href="product.html?id=2">
-                    <img src="img/notebook.webp" alt="Notebook ABC" class="w-full h-48 object-contain p-4">
-                </a>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1 relative">
+                <div class="relative">
+                    <a href="product.html?id=2">
+                        <img src="img/notebook.webp" alt="Notebook ABC" class="w-full h-48 object-contain p-4">
+                    </a>
+                    <div id="sold-out-badge-2" class="sold-out-badge hidden">ESGOTADO</div>
+                    <div id="sold-out-overlay-2" class="sold-out-overlay hidden">
+                        <span class="text-xl font-bold text-gray-700">PRODUTO ESGOTADO</span>
+                    </div>
+                </div>
                 <div class="p-4">
                     <a href="product.html?id=2" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Notebook ABC i7 16GB SSD 512GB Tela 15.6'' Full HD</a>
                     <p class="text-gray-800 font-bold text-xl mt-2">R$ 3.499,99</p>
                     <p class="text-green-600 text-sm mt-1">12x de R$ 291,66 sem juros</p>
                     <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <p class="text-sm text-gray-600 mt-1">Estoque: <span id="stock-2">5</span> unidades</p>
                     <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="2" data-name="Notebook ABC i7 16GB" data-price="3499.99" data-image="img/notebook.webp">Adicionar ao carrinho</button>
                 </div>
             </div>
             
             <!-- Produto 3 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
-                <a href="product.html?id=3">
-                    <img src="img/fone.jpg" alt="Fone de Ouvido Bluetooth" class="w-full h-48 object-contain p-4">
-                </a>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1 relative">
+                <div class="relative">
+                    <a href="product.html?id=3">
+                        <img src="img/fone.jpg" alt="Fone de Ouvido Bluetooth" class="w-full h-48 object-contain p-4">
+                    </a>
+                    <div id="sold-out-badge-3" class="sold-out-badge hidden">ESGOTADO</div>
+                    <div id="sold-out-overlay-3" class="sold-out-overlay hidden">
+                        <span class="text-xl font-bold text-gray-700">PRODUTO ESGOTADO</span>
+                    </div>
+                </div>
                 <div class="p-4">
                     <a href="product.html?id=3" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Fone de Ouvido Bluetooth com Cancelamento de Ruído</a>
                     <p class="text-gray-800 font-bold text-xl mt-2">R$ 299,99</p>
                     <p class="text-green-600 text-sm mt-1">6x de R$ 50,00 sem juros</p>
                     <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <p class="text-sm text-gray-600 mt-1">Estoque: <span id="stock-3">20</span> unidades</p>
                     <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="3" data-name="Fone Bluetooth Cancelamento Ruído" data-price="299.99" data-image="img/fone.jpg">Adicionar ao carrinho</button>
                 </div>
             </div>
             
             <!-- Produto 4 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
-                <a href="product.html?id=4">
-                    <img src="img/relogio.jpg" alt="Smartwatch Pro" class="w-full h-48 object-contain p-4">
-                </a>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1 relative">
+                <div class="relative">
+                    <a href="product.html?id=4">
+                        <img src="img/relogio.jpg" alt="Smartwatch Pro" class="w-full h-48 object-contain p-4">
+                    </a>
+                    <div id="sold-out-badge-4" class="sold-out-badge hidden">ESGOTADO</div>
+                    <div id="sold-out-overlay-4" class="sold-out-overlay hidden">
+                        <span class="text-xl font-bold text-gray-700">PRODUTO ESGOTADO</span>
+                    </div>
+                </div>
                 <div class="p-4">
                     <a href="product.html?id=4" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Smartwatch Pro Monitor Cardíaco à Prova d'Água</a>
                     <p class="text-gray-800 font-bold text-xl mt-2">R$ 899,99</p>
                     <p class="text-green-600 text-sm mt-1">6x de R$ 150,00 sem juros</p>
                     <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <p class="text-sm text-gray-600 mt-1">Estoque: <span id="stock-4">8</span> unidades</p>
                     <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="4" data-name="Smartwatch Pro" data-price="899.99" data-image="img/relogio.jpg">Adicionar ao carrinho</button>
                 </div>
             </div>
             
             <!-- Produto 5 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
-                <a href="product.html?id=5">
-                    <img src="img/tv.webp" alt="TV Smart 4K" class="w-full h-48 object-contain p-4">
-                </a>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1 relative">
+                <div class="relative">
+                    <a href="product.html?id=5">
+                        <img src="img/tv.webp" alt="TV Smart 4K" class="w-full h-48 object-contain p-4">
+                    </a>
+                    <div id="sold-out-badge-5" class="sold-out-badge hidden">ESGOTADO</div>
+                    <div id="sold-out-overlay-5" class="sold-out-overlay hidden">
+                        <span class="text-xl font-bold text-gray-700">PRODUTO ESGOTADO</span>
+                    </div>
+                </div>
                 <div class="p-4">
                     <a href="product.html?id=5" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">TV Smart 55" 4K UHD HDR Android TV</a>
                     <p class="text-gray-800 font-bold text-xl mt-2">R$ 2.799,99</p>
                     <p class="text-green-600 text-sm mt-1">12x de R$ 233,33 sem juros</p>
                     <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <p class="text-sm text-gray-600 mt-1">Estoque: <span id="stock-5">6</span> unidades</p>
                     <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="5" data-name="TV Smart 55'' 4K" data-price="2799.99" data-image="img/tv.webp">Adicionar ao carrinho</button>
                 </div>
             </div>
             
             <!-- Produto 6 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
-                <a href="product.html?id=6">
-                    <img src="img/camera.jpg" alt="Câmera DSLR" class="w-full h-48 object-contain p-4">
-                </a>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1 relative">
+                <div class="relative">
+                    <a href="product.html?id=6">
+                        <img src="img/camera.jpg" alt="Câmera DSLR" class="w-full h-48 object-contain p-4">
+                    </a>
+                    <div id="sold-out-badge-6" class="sold-out-badge hidden">ESGOTADO</div>
+                    <div id="sold-out-overlay-6" class="sold-out-overlay hidden">
+                        <span class="text-xl font-bold text-gray-700">PRODUTO ESGOTADO</span>
+                    </div>
+                </div>
                 <div class="p-4">
                     <a href="product.html?id=6" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Câmera DSLR 24.2MP com Lente 18-55mm</a>
                     <p class="text-gray-800 font-bold text-xl mt-2">R$ 3.299,99</p>
                     <p class="text-green-600 text-sm mt-1">12x de R$ 275,00 sem juros</p>
                     <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <p class="text-sm text-gray-600 mt-1">Estoque: <span id="stock-6">4</span> unidades</p>
                     <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="6" data-name="Câmera DSLR 24.2MP" data-price="3299.99" data-image="img/camera.jpg">Adicionar ao carrinho</button>
                 </div>
             </div>
             
             <!-- Produto 7 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
-                <a href="product.html?id=7">
-                    <img src="img/ps5.jpg" alt="Console de Games" class="w-full h-48 object-contain p-4">
-                </a>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1 relative">
+                <div class="relative">
+                    <a href="product.html?id=7">
+                        <img src="img/ps5.jpg" alt="Console de Games" class="w-full h-48 object-contain p-4">
+                    </a>
+                    <div id="sold-out-badge-7" class="sold-out-badge hidden">ESGOTADO</div>
+                    <div id="sold-out-overlay-7" class="sold-out-overlay hidden">
+                        <span class="text-xl font-bold text-gray-700">PRODUTO ESGOTADO</span>
+                    </div>
+                </div>
                 <div class="p-4">
                     <a href="product.html?id=7" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Console de Games 1TB + 2 Controles</a>
                     <p class="text-gray-800 font-bold text-xl mt-2">R$ 4.499,99</p>
                     <p class="text-green-600 text-sm mt-1">12x de R$ 375,00 sem juros</p>
                     <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <p class="text-sm text-gray-600 mt-1">Estoque: <span id="stock-7">3</span> unidades</p>
                     <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="7" data-name="Console de Games 1TB" data-price="4499.99" data-image="img/ps5.jpg">Adicionar ao carrinho</button>
                 </div>
             </div>
             
             <!-- Produto 8 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1">
-                <a href="product.html?id=8">
-                    <img src="img/air fryer.jpg" alt="Air Fryer" class="w-full h-48 object-contain p-4">
-                </a>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow hover:transform hover:-translate-y-1 relative">
+                <div class="relative">
+                    <a href="product.html?id=8">
+                        <img src="img/air fryer.jpg" alt="Air Fryer" class="w-full h-48 object-contain p-4">
+                    </a>
+                    <div id="sold-out-badge-8" class="sold-out-badge hidden">ESGOTADO</div>
+                    <div id="sold-out-overlay-8" class="sold-out-overlay hidden">
+                        <span class="text-xl font-bold text-gray-700">PRODUTO ESGOTADO</span>
+                    </div>
+                </div>
                 <div class="p-4">
                     <a href="product.html?id=8" class="text-lg font-semibold hover:text-blue-600 line-clamp-2">Air Fryer 5L Digital com Timer e 10 Programas</a>
                     <p class="text-gray-800 font-bold text-xl mt-2">R$ 499,99</p>
                     <p class="text-green-600 text-sm mt-1">6x de R$ 83,33 sem juros</p>
                     <p class="text-gray-500 text-xs mt-1">Frete grátis</p>
+                    <p class="text-sm text-gray-600 mt-1">Estoque: <span id="stock-8">15</span> unidades</p>
                     <button class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 add-to-cart" data-id="8" data-name="Air Fryer 5L Digital" data-price="499.99" data-image="img/air fryer.jpg">Adicionar ao carrinho</button>
                 </div>
             </div>
@@ -178,6 +260,77 @@
             document.getElementById('cartCount').textContent = count;
         }
         
+        // Simular banco de dados de produtos com estoque
+        const products = {
+            '1': { stock: 10 },
+            '2': { stock: 5 },
+            '3': { stock: 20 },
+            '4': { stock: 8 },
+            '5': { stock: 6 },
+            '6': { stock: 4 },
+            '7': { stock: 3 },
+            '8': { stock: 15 }
+        };
+        
+        // Carregar estoque inicial e verificar produtos esgotados
+        function loadInitialStocks() {
+            for (let i = 1; i <= 8; i++) {
+                const stockElement = document.getElementById(`stock-${i}`);
+                const productId = i.toString();
+                const product = products[productId];
+                
+                if (stockElement) {
+                    stockElement.textContent = product.stock;
+                    
+                    // Verificar se o produto está esgotado
+                    if (product.stock <= 0) {
+                        // Mostrar badge e overlay de esgotado
+                        document.getElementById(`sold-out-badge-${i}`).classList.remove('hidden');
+                        document.getElementById(`sold-out-overlay-${i}`).classList.remove('hidden');
+                        
+                        // Desativar botão de adicionar ao carrinho
+                        const addButton = document.querySelector(`.add-to-cart[data-id="${i}"]`);
+                        if (addButton) {
+                            addButton.disabled = true;
+                            addButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                            addButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                            addButton.textContent = 'Produto esgotado';
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Verificar estoque
+        function checkStock(productId, quantity = 1) {
+            return products[productId].stock >= quantity;
+        }
+        
+        // Atualizar estoque
+        function updateStock(productId, quantity = 1) {
+            products[productId].stock -= quantity;
+            const stockElement = document.getElementById(`stock-${productId}`);
+            if (stockElement) {
+                stockElement.textContent = products[productId].stock;
+                
+                // Verificar se o produto ficou esgotado após a atualização
+                if (products[productId].stock <= 0) {
+                    // Mostrar badge e overlay de esgotado
+                    document.getElementById(`sold-out-badge-${productId}`).classList.remove('hidden');
+                    document.getElementById(`sold-out-overlay-${productId}`).classList.remove('hidden');
+                    
+                    // Desativar botão de adicionar ao carrinho
+                    const addButton = document.querySelector(`.add-to-cart[data-id="${productId}"]`);
+                    if (addButton) {
+                        addButton.disabled = true;
+                        addButton.classList.add('bg-gray-400', 'cursor-not-allowed');
+                        addButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                        addButton.textContent = 'Produto esgotado';
+                    }
+                }
+            }
+        }
+        
         // Adicionar ao carrinho
         document.querySelectorAll('.add-to-cart').forEach(button => {
             button.addEventListener('click', function() {
@@ -186,9 +339,20 @@
                 const productPrice = parseFloat(this.getAttribute('data-price'));
                 const productImage = this.getAttribute('data-image');
                 
+                // Verificar estoque antes de adicionar
+                if (!checkStock(productId)) {
+                    alert('Produto esgotado!');
+                    return;
+                }
+                
                 const existingItem = cart.find(item => item.id === productId);
                 
                 if (existingItem) {
+                    // Verificar se ainda há estoque para mais uma unidade
+                    if (!checkStock(productId)) {
+                        alert('Não há estoque suficiente para adicionar mais unidades deste produto!');
+                        return;
+                    }
                     existingItem.quantity += 1;
                 } else {
                     cart.push({
@@ -199,6 +363,9 @@
                         image: productImage
                     });
                 }
+                
+                // Atualizar estoque
+                updateStock(productId);
                 
                 localStorage.setItem('cart', JSON.stringify(cart));
                 updateCartCount();
@@ -217,18 +384,9 @@
             });
         });
         
-        // Inicializar contador do carrinho
+        // Inicializar contador do carrinho e estoques
         updateCartCount();
-        const productImage = this.getAttribute('data-image');
-
-// ...
-cart.push({
-    id: productId,
-    name: productName,
-    price: productPrice,
-    quantity: 1,
-    image: productImage
-});
+        loadInitialStocks();
     </script>
 </body>
 </html>
