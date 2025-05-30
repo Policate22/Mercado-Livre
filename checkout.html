@@ -436,6 +436,12 @@
     </footer>
 
     <script>
+       document.getElementById('logoutBtn').addEventListener('click', function() {
+    if (confirm('Deseja realmente sair?')) {
+        window.location.href = 'index.html';
+    }
+});
+        
         // Simular carrinho de compras
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         
@@ -891,5 +897,6 @@
         updateCartCount();
         setupBoletoDueDate();
     </script>
+    
 </body>
 </html>
