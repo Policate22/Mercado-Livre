@@ -29,7 +29,6 @@
             </div>
         </div>
     </header>
-
     <!-- Conteúdo principal -->
     <main class="container mx-auto py-6 px-4">
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
@@ -77,6 +76,11 @@
     </main>
 
     <script>
+document.getElementById('logoutBtn').addEventListener('click', function() {
+    if (confirm('Deseja realmente sair?')) {
+        window.location.href = 'index.html';
+    }
+});
         // Simular carrinho de compras
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let currentQuantity = 1;
@@ -209,15 +213,11 @@
             }, 2000);
         });
         
-        // Botão de sair
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            if (confirm('Deseja realmente sair?')) {
-                window.location.href = 'index.html';
-            }
-        });
+      
         
         // Inicializar contador do carrinho
         updateCartCount();
     </script>
+    
 </body>
 </html>
