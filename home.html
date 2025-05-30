@@ -90,7 +90,7 @@
 <body>
     <!-- Overlay de logout -->
     <div id="logoutOverlay" class="logout-overlay">
-        <div class="logout-text">Saindo do Mercado Livre...</div>
+        <div id="logoutText" class="logout-text">Saindo do Mercado Livre...</div>
         <div class="loading-spinner"></div>
     </div>
 
@@ -310,14 +310,42 @@
         // Adicionar evento ao botão de sair com efeito de carregamento
         document.getElementById('logoutBtn').addEventListener('click', function() {
             const logoutOverlay = document.getElementById('logoutOverlay');
+            const logoutText = document.getElementById('logoutText');
             
             // Mostrar overlay de logout
             logoutOverlay.classList.add('active');
             
-            // Esperar a animação de digitação terminar (3.5s) + 1s de spinner
+            // Mensagens para exibir durante o logout
+            const messages = [
+                "Saindo do Mercado Livre...",
+                "Finalizando sua sessão...",
+                "Aguarde um momento...",
+                "Até breve! Volte sempre..."
+            ];
+            
+            let currentMessage = 0;
+            
+            // Função para atualizar a mensagem
+            function updateMessage() {
+                logoutText.textContent = messages[currentMessage];
+                logoutText.style.animation = 'none';
+                void logoutText.offsetWidth; // Trigger reflow
+                logoutText.style.animation = 'typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite';
+                
+                currentMessage = (currentMessage + 1) % messages.length;
+            }
+            
+            // Iniciar com a primeira mensagem
+            updateMessage();
+            
+            // Mudar mensagem a cada 3.5 segundos
+            const messageInterval = setInterval(updateMessage, 3500);
+            
+            // Redirecionar após 12 segundos (tempo para todas as mensagens)
             setTimeout(() => {
+                clearInterval(messageInterval);
                 window.location.href = 'index.html';
-            }, 4500);
+            }, 12000);
         });
 
         // Simular carrinho de compras
