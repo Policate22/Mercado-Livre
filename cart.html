@@ -113,8 +113,14 @@
             </a>
         </div>
     </footer>
-
+ 
     <script>
+   document.getElementById('logoutBtn').addEventListener('click', function() {
+    if (confirm('Deseja realmente sair?')) {
+        window.location.href = 'index.html';
+    }
+});
+        
         // Carregar carrinho do localStorage
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         
@@ -237,12 +243,7 @@
             }
         });
         
-        // Botão de sair
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            if (confirm('Deseja realmente sair?')) {
-                window.location.href = 'index.html';
-            }
-        });
+       
         
         // Carregar nome do usuário se existir
         const userName = localStorage.getItem('userName');
@@ -254,5 +255,6 @@
         updateCartDisplay();
         updateCartCount();
     </script>
+    
 </body>
 </html>
