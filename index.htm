@@ -62,6 +62,233 @@
     </div>
 
     <script>
+        // Inicializar o banco de dados IndexedDB
+        let db;
+        const DB_NAME = 'MercadoLivreDB';
+        const DB_VERSION = 1;
+        
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onerror = function(event) {
+                    console.error('Erro ao abrir o banco de dados:', event.target.error);
+                    reject('Erro ao abrir o banco de dados');
+                };
+                
+                request.onsuccess = function(event) {
+                    db = event.target.result;
+                    console.log('Banco de dados aberto com sucesso');
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = function(event) {
+                    const db = event.target.result;
+                    
+                    // Criar store de usuários
+                    if (!db.objectStoreNames.contains('users')) {
+                        const usersStore = db.createObjectStore('users', { keyPath: 'email' });
+                        usersStore.createIndex('email', 'email', { unique: true });
+                    }
+                    
+                    // Criar store de produtos
+                    if (!db.objectStoreNames.contains('products')) {
+                        const productsStore = db.createObjectStore('products', { keyPath: 'id' });
+                        productsStore.createIndex('id', 'id', { unique: true });
+                        
+                        // Adicionar produtos iniciais com estoque
+                        const products = [
+                            {
+                                id: '1',
+                                name: 'Smartphone XYZ 128GB Tela 6.5" Câmera Tripla 48MP',
+                                price: 1999.99,
+                                description: 'Smartphone XYZ com tela de 6.5 polegadas, processador Octa-core, 128GB de armazenamento, 6GB de RAM, câmera traseira tripla de 48MP + 12MP + 5MP e câmera frontal de 32MP. Bateria de 5000mAh com carregamento rápido.',
+                                image: 'img/iphone.png',
+                                stock: 10
+                            },
+                            {
+                                id: '2',
+                                name: 'Notebook ABC i7 16GB SSD 512GB Tela 15.6" Full HD',
+                                price: 3499.99,
+                                description: 'Notebook ABC com processador i7, 16GB de RAM, SSD de 512GB, tela Full HD de 15.6 polegadas e placa de vídeo dedicada. Bateria com até 8 horas de duração.',
+                                image: 'img/notebook.webp',
+                                stock: 5
+                            },
+                            {
+                                id: '3',
+                                name: 'Fone de Ouvido Bluetooth com Cancelamento de Ruído',
+                                price: 299.99,
+                                description: 'Fone de ouvido Bluetooth com cancelamento de ruído ativo, bateria de 30 horas de duração, à prova d\'água e com microfone integrado para chamadas.',
+                                image: 'img/fone.jpg',
+                                stock: 20
+                            },
+                            {
+                                id: '4',
+                                name: 'Smartwatch Pro Monitor Cardíaco à Prova d\'Água',
+                                price: 899.99,
+                                description: 'Smartwatch Pro com monitoramento de frequência cardíaca, oxigenação no sangue, GPS integrado, resistente à água e com bateria de 7 dias de duração.',
+                                image: 'img/relogio.jpg',
+                                stock: 8
+                            },
+                            {
+                                id: '5',
+                                name: 'TV Smart 55" 4K UHD HDR Android TV',
+                                price: 2799.99,
+                                description: 'TV Smart 55 polegadas com resolução 4K UHD, HDR, sistema operacional Android TV, 3 HDMI, 2 USB e conexão Wi-Fi.',
+                                image: 'img/tv.webp',
+                                stock: 6
+                            },
+                            {
+                                id: '6',
+                                name: 'Câmera DSLR 24.2MP com Lente 18-55mm',
+                                price: 3299.99,
+                                description: 'Câmera DSLR profissional 24.2MP com lente 18-55mm, gravação em Full HD, tela articulável e Wi-Fi integrado.',
+                                image: 'img/camera.jpg',
+                                stock: 4
+                            },
+                            {
+                                id: '7',
+                                name: 'Console de Games 1TB + 2 Controles',
+                                price: 4499.99,
+                                description: 'Console de última geração com 1TB de armazenamento, 2 controles sem fio, compatível com 4K e HDR.',
+                                image: 'img/ps5.jpg',
+                                stock: 3
+                            },
+                            {
+                                id: '8',
+                                name: 'Air Fryer 5L Digital com Timer e 10 Programas',
+                                price: 499.99,
+                                description: 'Air Fryer digital com capacidade de 5 litros, timer ajustável, 10 programas pré-definidos e display digital.',
+                                image: 'img/air fryer.jpg',
+                                stock: 15
+                            }
+                        ];
+                        
+                        const transaction = event.target.transaction;
+                        const store = transaction.objectStore('products');
+                        
+                        products.forEach(product => {
+                            store.add(product);
+                        });
+                    }
+                };
+            });
+        }
+        
+        // Função para adicionar usuário
+        function addUser(user) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['users'], 'readwrite');
+                const store = transaction.objectStore('users');
+                
+                const request = store.add(user);
+                
+                request.onsuccess = function() {
+                    resolve('Usuário cadastrado com sucesso');
+                };
+                
+                request.onerror = function(event) {
+                    if (event.target.error.name === 'ConstraintError') {
+                        reject('Este e-mail já está cadastrado');
+                    } else {
+                        reject('Erro ao cadastrar usuário');
+                    }
+                };
+            });
+        }
+        
+        // Função para buscar usuário por e-mail
+        function getUserByEmail(email) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['users'], 'readonly');
+                const store = transaction.objectStore('users');
+                
+                const request = store.get(email);
+                
+                request.onsuccess = function() {
+                    if (request.result) {
+                        resolve(request.result);
+                    } else {
+                        reject('Usuário não encontrado');
+                    }
+                };
+                
+                request.onerror = function() {
+                    reject('Erro ao buscar usuário');
+                };
+            });
+        }
+        
+        // Função para buscar produto por ID
+        function getProductById(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['products'], 'readonly');
+                const store = transaction.objectStore('products');
+                
+                const request = store.get(id);
+                
+                request.onsuccess = function() {
+                    if (request.result) {
+                        resolve(request.result);
+                    } else {
+                        reject('Produto não encontrado');
+                    }
+                };
+                
+                request.onerror = function() {
+                    reject('Erro ao buscar produto');
+                };
+            });
+        }
+        
+        // Função para atualizar estoque do produto
+        function updateProductStock(id, quantityChange) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['products'], 'readwrite');
+                const store = transaction.objectStore('products');
+                
+                const request = store.get(id);
+                
+                request.onsuccess = function() {
+                    const product = request.result;
+                    if (product) {
+                        const newStock = product.stock - quantityChange;
+                        if (newStock < 0) {
+                            reject('Estoque insuficiente');
+                            return;
+                        }
+                        
+                        product.stock = newStock;
+                        const updateRequest = store.put(product);
+                        
+                        updateRequest.onsuccess = function() {
+                            resolve(product);
+                        };
+                        
+                        updateRequest.onerror = function() {
+                            reject('Erro ao atualizar estoque');
+                        };
+                    } else {
+                        reject('Produto não encontrado');
+                    }
+                };
+                
+                request.onerror = function() {
+                    reject('Erro ao buscar produto');
+                };
+            });
+        }
+        
+        // Inicializar o banco de dados quando a página carregar
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await initDB();
+                console.log('Banco de dados inicializado com sucesso');
+            } catch (error) {
+                console.error('Erro ao inicializar o banco de dados:', error);
+            }
+        });
+        
         // Alternar entre login e cadastro
         document.getElementById('loginTab').addEventListener('click', function() {
             document.getElementById('loginForm').classList.remove('hidden');
@@ -79,33 +306,59 @@
             document.getElementById('loginTab').classList.add('text-gray-500');
         });
         
-        // Simular cadastro e redirecionamento
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        // Cadastro de usuário
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             // Validação de senha
             if (document.getElementById('registerPassword').value !== document.getElementById('registerConfirmPassword').value) {
                 alert('As senhas não coincidem!');
                 return;
             }
             
-            // Armazenar nome do usuário
-            const userName = document.getElementById('registerName').value;
-            localStorage.setItem('userName', userName);
+            const user = {
+                name: document.getElementById('registerName').value,
+                email: document.getElementById('registerEmail').value,
+                password: document.getElementById('registerPassword').value
+            };
             
-            alert('Cadastro realizado com sucesso! Redirecionando para a página inicial...');
-            window.location.href = 'home.html';
+            try {
+                await addUser(user);
+                
+                // Armazenar nome do usuário
+                localStorage.setItem('userName', user.name);
+                localStorage.setItem('userEmail', user.email);
+                
+                alert('Cadastro realizado com sucesso! Redirecionando para a página inicial...');
+                window.location.href = 'home.html';
+            } catch (error) {
+                alert(error);
+            }
         });
         
-        // Simular login e redirecionamento
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // Login de usuário
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Armazenar nome do usuário (simulado)
-            const userName = "Usuário Teste"; // Em um sistema real, isso viria da resposta do servidor
-            localStorage.setItem('userName', userName);
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
             
-            alert('Login realizado com sucesso! Redirecionando para a página inicial...');
-            window.location.href = 'home.html';
+            try {
+                const user = await getUserByEmail(email);
+                
+                if (user.password === password) {
+                    // Armazenar dados do usuário
+                    localStorage.setItem('userName', user.name);
+                    localStorage.setItem('userEmail', user.email);
+                    
+                    alert('Login realizado com sucesso! Redirecionando para a página inicial...');
+                    window.location.href = 'home.html';
+                } else {
+                    alert('Senha incorreta');
+                }
+            } catch (error) {
+                alert(error);
+            }
         });
     </script>
 </body>
